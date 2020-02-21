@@ -1,23 +1,23 @@
 {
-	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "1.0",
-	"FriendlyName": "HandyHTTP",
-	"Description": "",
-	"Category": "Other",
-	"CreatedBy": "Butterfly",
-	"CreatedByURL": "",
-	"DocsURL": "",
-	"MarketplaceURL": "",
-	"SupportURL": "",
-	"CanContainContent": true,
-	"IsBetaVersion": false,
-	"Installed": false,
-	"Modules": [
-		{
-			"Name": "HandyHTTP",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		}
-	]
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "HandyHTTP",
+  "Description": "This plugin provides the ability to upload, download, and delete as version 1.0. In fact, this plug-in is not completed and we will complete it in the hot update course.",
+  "Category": "Other",
+  "CreatedBy": "Other Courses",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "CanContainContent": true,
+  "IsBetaVersion": false,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "HandyHTTP",
+      "Type": "Runtime",
+      "LoadingPhase": "PreDefault"
+    }
+  ]
 }

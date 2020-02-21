@@ -18,6 +18,7 @@ FHandyHttpManage* FHandyHttpManage::Get()
 {
 	if (Instance == nullptr)
 	{
+		FScopeLock Lock(&Instance->Mutex);
 		Instance = new FHandyHttpManage();
 	}
 	return Instance;
@@ -51,9 +52,12 @@ FHandyHttpActionRequest* FHandyHttpManage::Find(FString& handle)
 {
 
 	FScopeLock Lock(&Instance->Mutex);
+
+	FHandyHttpActionRequest* Object = nullptr;
 	if (HTTPMap.Contains(handle))
 	{
-		return HTTPMap[handle];
+		Object = Instance->HTTPMap[handle];
+		Instance->HTTPMap.Remove(handle);
 	}
-	return nullptr;
+	return Object;
 }

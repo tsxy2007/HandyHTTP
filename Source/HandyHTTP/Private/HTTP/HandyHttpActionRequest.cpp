@@ -14,27 +14,6 @@ using namespace HandyHTTP::HTTP;
 
 //FHandyHttpActionRequest* FHandyHttpActionRequest::Instance = nullptr;
 
-void HttpRequestPtrToHandyRequest(FHttpRequestPtr Request, FHandyHttpRequest& HandyHttpRequest)
-{
-	HandyHttpRequest.Verb = Request->GetVerb();
-	HandyHttpRequest.URL = Request->GetURL();
-	HandyHttpRequest.Status = (FHandyHttpState)Request->GetStatus();
-	HandyHttpRequest.ElapsedTime = Request->GetElapsedTime();
-	HandyHttpRequest.ContentType = Request->GetContentType();
-	HandyHttpRequest.ContentLength = Request->GetContentLength();
-	HandyHttpRequest.AllHeaders = Request->GetAllHeaders();
-}
-
-void HttpResponsePtrToHandyResponse(FHttpResponsePtr Response, FHandyHttpResponse& HandyHttpResponse)
-{
-	HandyHttpResponse.ResponseCode = Response->GetResponseCode();
-	HandyHttpResponse.URL = Response->GetURL();
-	HandyHttpResponse.ResponseMessage = Response->GetContentAsString();
-	HandyHttpResponse.ContentType = Response->GetContentType();
-	HandyHttpResponse.ContentLength = Response->GetContentLength();
-	HandyHttpResponse.AllHeaders = Response->GetAllHeaders();
-}
-
 FHandyHttpActionRequest::FHandyHttpActionRequest()
 {
 }
@@ -68,7 +47,7 @@ bool FHandyHttpActionRequest::GetObject(const FString& URL, const FString& SaveP
 
 	FGetObjectRequest Request(URL);
 
-	REQUEST_BIND_FUN();
+	REQUEST_BIND_FUN(FHandyHttpActionRequest);
 
 	return Client.GetObject(Request);
 }
@@ -79,7 +58,7 @@ bool FHandyHttpActionRequest::PutObject(const FString& URL, const FString& Local
 
 	FPutObjectRequest Request(URL, LocalPaths);
 
-	REQUEST_BIND_FUN();
+	REQUEST_BIND_FUN(FHandyHttpActionRequest);
 
 	return Client.PutObject(Request);
 }
@@ -90,7 +69,7 @@ bool FHandyHttpActionRequest::PutObject(const FString& URL, TArray<uint8>& Data)
 
 	FPutObjectRequest Request(URL, Data);
 
-	REQUEST_BIND_FUN();
+	REQUEST_BIND_FUN(FHandyHttpActionRequest);
 
 	return Client.PutObject(Request);
 }
@@ -101,7 +80,7 @@ bool FHandyHttpActionRequest::PutObject(const FString& URL, TSharedRef<FArchive,
 
 	FPutObjectRequest Request(URL, Stream);
 
-	REQUEST_BIND_FUN();
+	REQUEST_BIND_FUN(FHandyHttpActionRequest);
 
 	return Client.PutObject(Request);
 }
@@ -136,11 +115,19 @@ void FHandyHttpActionRequest::HttpRequestCompleted(FHttpRequestPtr Request, FHtt
 		}
 
 		FHandyHttpRequest HandyHttpRequest;
-		{
-			HttpRequestPtrToHandyRequest(Request, HandyHttpRequest);
-		}
 		FHandyHttpResponse HandyHttpResponse;
 		{
+			HttpRequestPtrToHandyRequest(Request, HandyHttpRequest);
+			HttpResponsePtrToHandyResponse(Response, HandyHttpResponse);
+		}
+		HandyHttpRequestCompleteDelegate.ExecuteIfBound(HandyHttpRequest, HandyHttpResponse, bConnectedSuccessfully);
+	}
+	else
+	{
+		FHandyHttpRequest HandyHttpRequest;
+		FHandyHttpResponse HandyHttpResponse;
+		{
+			HttpRequestPtrToHandyRequest(Request, HandyHttpRequest);
 			HttpResponsePtrToHandyResponse(Response, HandyHttpResponse);
 		}
 		HandyHttpRequestCompleteDelegate.ExecuteIfBound(HandyHttpRequest, HandyHttpResponse, bConnectedSuccessfully);

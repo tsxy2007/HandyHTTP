@@ -13,7 +13,7 @@ class HANDYHTTP_API FHandyHttpActionRequest
 {
 public:
 	FHandyHttpActionRequest();
-	~FHandyHttpActionRequest();
+	virtual ~FHandyHttpActionRequest();
 
 	//static FHandyHttpActionRequest* Get();
 	//static void Destory();
@@ -21,12 +21,14 @@ public:
 
 public:
 
-	bool GetObject(const FString& URL, const FString& SavePaths);
-	bool PutObject(const FString& URL, TArray<uint8>& Data);
-	bool PutObject(const FString& URL, const FString& LocalPaths);
-	bool PutObject(const FString& URL, TSharedRef<FArchive, ESPMode::ThreadSafe> Stream);
-	bool DeleteObject(const FString& URL);
-private:
+	virtual bool GetObject(const FString& URL, const FString& SavePaths);
+	virtual bool PutObject(const FString& URL, TArray<uint8>& Data);
+	virtual bool PutObject(const FString& URL, const FString& LocalPaths);
+	virtual bool PutObject(const FString& URL, TSharedRef<FArchive, ESPMode::ThreadSafe> Stream);
+	virtual bool DeleteObject(const FString& URL);
+
+	FORCEINLINE FString GetPaths() { return TmpSavePaths; }
+protected:
 	void HttpRequestCompleted(FHttpRequestPtr Request,FHttpResponsePtr Response,bool bConnectedSuccessfully);
 	void HttpRequestProgress(FHttpRequestPtr Request, int32 BytesSent,int32 BytesReceived);
 	void HttpRequestHeaderReceived(FHttpRequestPtr Request, const FString& HeaderName, const FString& NewHeaderValue);

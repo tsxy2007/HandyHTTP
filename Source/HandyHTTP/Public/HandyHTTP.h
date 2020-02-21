@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FHandyHTTPModule : public IModuleInterface
+class HANDYHTTP_API FHandyHTTPModule : public IModuleInterface
 {
 public:
 

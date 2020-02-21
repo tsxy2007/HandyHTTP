@@ -5,8 +5,6 @@
 #include "CoreMinimal.h"
 #include "HandyHttpType.generated.h"
 
-typedef FString FString;
-
 UENUM(BlueprintType)
 enum class FHandyHttpState : uint8
 {
@@ -20,8 +18,9 @@ enum class FHandyHttpState : uint8
 USTRUCT(BlueprintType)
 struct FHandyHttpBase
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
+	FHandyHttpBase() {}
 public:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category=HandyHttpBase)
@@ -59,7 +58,7 @@ public:
 
 
 USTRUCT(BlueprintType)
-struct FHandyHttpResponse : public FHandyHttpBase
+struct  FHandyHttpResponse : public FHandyHttpBase
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -75,3 +74,5 @@ public:
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FHandyHttpRequestCompleteDelegate, const FHandyHttpRequest&, Request, const FHandyHttpResponse&, Response, bool, bConnectedSuccessfully);
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FHandyHttpRequestProgressDelegate, const FHandyHttpRequest&, Request, int32, BytesSent, int32, BytesReceived);
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FHandyHttpRequestHeaderReceivedDelegate, const FHandyHttpRequest&, Request, const FString&, HeaderName, const FString&, NewHeaderValue);
+
+
