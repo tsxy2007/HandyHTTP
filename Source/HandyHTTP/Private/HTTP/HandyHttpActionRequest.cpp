@@ -21,6 +21,17 @@ FHandyHttpActionRequest::FHandyHttpActionRequest()
 FHandyHttpActionRequest::~FHandyHttpActionRequest()
 {
 }
+
+void FHandyHttpActionRequest::GetObjects(const TArray<FString>& URL, const FString& SavePaths)
+{
+
+}
+
+void FHandyHttpActionRequest::DeleteObjects(const TArray<FString>& URL)
+{
+
+}
+
 //
 //FHandyHttpActionRequest* FHandyHttpActionRequest::Get()
 //{
@@ -121,6 +132,7 @@ void FHandyHttpActionRequest::HttpRequestCompleted(FHttpRequestPtr Request, FHtt
 			HttpResponsePtrToHandyResponse(Response, HandyHttpResponse);
 		}
 		HandyHttpRequestCompleteDelegate.ExecuteIfBound(HandyHttpRequest, HandyHttpResponse, bConnectedSuccessfully);
+		HandyCompleteDelegate.ExecuteIfBound(HandyHttpRequest, HandyHttpResponse, bConnectedSuccessfully);
 	}
 	else
 	{
@@ -131,7 +143,11 @@ void FHandyHttpActionRequest::HttpRequestCompleted(FHttpRequestPtr Request, FHtt
 			HttpResponsePtrToHandyResponse(Response, HandyHttpResponse);
 		}
 		HandyHttpRequestCompleteDelegate.ExecuteIfBound(HandyHttpRequest, HandyHttpResponse, bConnectedSuccessfully);
+		HandyCompleteDelegate.ExecuteIfBound(HandyHttpRequest, HandyHttpResponse, bConnectedSuccessfully);
 	}
+
+	HandyAllRequestCompleteDelegate.ExecuteIfBound();
+	AllTasksCompletedDelegate.ExecuteIfBound();
 	delete this;
 }
 
@@ -140,6 +156,7 @@ void FHandyHttpActionRequest::HttpRequestProgress(FHttpRequestPtr Request, int32
 	FHandyHttpRequest HandyHttpRequest;
 	HttpRequestPtrToHandyRequest(Request, HandyHttpRequest);
 	HandyHttpRequestProgressDelegate.ExecuteIfBound(HandyHttpRequest, BytesSent, BytesReceived);
+	HandySingleRequestProgressDelegate.ExecuteIfBound(HandyHttpRequest, BytesSent, BytesReceived);
 }
 
 void FHandyHttpActionRequest::HttpRequestHeaderReceived(FHttpRequestPtr Request, const FString& HeaderName, const FString& NewHeaderValue)
@@ -147,6 +164,7 @@ void FHandyHttpActionRequest::HttpRequestHeaderReceived(FHttpRequestPtr Request,
 	FHandyHttpRequest HandyHttpRequest;
 	HttpRequestPtrToHandyRequest(Request, HandyHttpRequest);
 	HandyHttpRequestHeaderReceivedDelegate.ExecuteIfBound(HandyHttpRequest, HeaderName, NewHeaderValue);
+	HandySingleRequestHeaderReceivedDelegate.ExecuteIfBound(HandyHttpRequest, HeaderName, NewHeaderValue);
 }
 
 void FHandyHttpActionRequest::Print(const FString& Msg, float Time /*= 10.f*/, FColor Color /*= FColor::Red*/)

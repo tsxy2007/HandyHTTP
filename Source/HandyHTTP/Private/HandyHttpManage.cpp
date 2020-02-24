@@ -3,6 +3,7 @@
 
 #include "HandyHttpManage.h"
 #include "HTTP/HandyHttpActionRequest.h"
+#include "HTTP/HandyHttpActionMultpleRequest.h"
 
 FHandyHttpManage* FHandyHttpManage::Instance = nullptr;
 
@@ -33,16 +34,38 @@ void FHandyHttpManage::Destory()
 	Instance = nullptr;
 }
 
-FString FHandyHttpManage::RegistedHttpObject(FHandyHttpRequestCompleteDelegate HandyHttpRequestCompleteDelegate, FHandyHttpRequestProgressDelegate HandyHttpRequestProgressDelegate, FHandyHttpRequestHeaderReceivedDelegate HandyHttpRequestHeaderReceivedDelegate)
+FString FHandyHttpManage::RegistedHttpRequest(
+	EHTTPRequestType HttpRequestType /*= EHTTPRequestType::SINGLE*/, 
+	FHandyHttpSingleRequestCompleteDelegate HandyHttpRequestCompleteDelegate /*= FHandyHttpSingleRequestCompleteDelegate()*/,
+	FHandyHttpSingleRequestProgressDelegate HandyHttpRequestProgressDelegate /*= FHandyHttpSingleRequestProgressDelegate()*/,
+	FHandyHttpSingleRequestHeaderReceivedDelegate HandyHttpRequestHeaderReceivedDelegate /*= FHandyHttpSingleRequestHeaderReceivedDelegate() */,
+	FHandyAllRequestCompleteDelegate HandyAllRequestCompleteDelegate /*= FHandyAllRequestCompleteDelegate()*/
+)
 {
-
 	FScopeLock Lock(&Instance->Mutex);
-	FHandyHttpActionRequest* HttpObject = new FHandyHttpActionRequest();
+	FHandyHttpActionRequest* HttpObject = nullptr;
+	switch (HttpRequestType)
+	{
+	case EHTTPRequestType::SINGLE:
+	{
+		HttpObject = new FHandyHttpActionRequest();
+	}
+		break;
+	case EHTTPRequestType::MULTPLE:
+	{
+		HttpObject = new FHandyHttpActionMultpleRequest();
+	}
+		break;
+	default:
+		break;
+	}
 	{
 		HttpObject->HandyHttpRequestCompleteDelegate = HandyHttpRequestCompleteDelegate;
 		HttpObject->HandyHttpRequestHeaderReceivedDelegate = HandyHttpRequestHeaderReceivedDelegate;
 		HttpObject->HandyHttpRequestProgressDelegate = HandyHttpRequestProgressDelegate;
+		HttpObject->HandyAllRequestCompleteDelegate = HandyAllRequestCompleteDelegate;
 	}
+	
 	FString Key = FGuid::NewGuid().ToString();
 	HTTPMap.Add(Key, HttpObject);
 	return Key;

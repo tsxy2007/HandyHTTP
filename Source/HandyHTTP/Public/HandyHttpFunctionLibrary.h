@@ -17,7 +17,13 @@ class HANDYHTTP_API UHandyHttpFunctionLibrary : public UBlueprintFunctionLibrary
 public:
 
 	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (DisplayName = "HandyRegistedHttpObject", Keywords = "RHO"), Category = "HandyHttp")
-	static FString RegistedHttpObject(FHandyHttpRequestCompleteDelegate HandyHttpRequestCompleteDelegate ,FHandyHttpRequestProgressDelegate HandyHttpRequestProgressDelegate,FHandyHttpRequestHeaderReceivedDelegate HandyHttpRequestHeaderReceivedDelegate);
+	static FString RegistedHttpRequest( FHandyHttpSingleRequestCompleteDelegate HandyHttpRequestCompleteDelegate ,FHandyHttpSingleRequestProgressDelegate HandyHttpRequestProgressDelegate,FHandyHttpSingleRequestHeaderReceivedDelegate HandyHttpRequestHeaderReceivedDelegate, FHandyAllRequestCompleteDelegate HandyAllRequestCompleteDelegate);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "RegistedHttpMultpleRequest", Keywords = "RHO"), Category = "HandyHttp")
+	static FString RegistedHttpMultpleRequest( FHandyHttpSingleRequestCompleteDelegate HandyHttpRequestCompleteDelegate, FHandyHttpSingleRequestProgressDelegate HandyHttpRequestProgressDelegate, FHandyHttpSingleRequestHeaderReceivedDelegate HandyHttpRequestHeaderReceivedDelegate, FHandyAllRequestCompleteDelegate HandyAllRequestCompleteDelegate);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "HandyGetObjects", Keywords = "GetObject"), Category = "HandyHttp")
+	static void GetObjects(FString Handle, const TArray<FString>& URL, const FString& SavePaths);
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "HandyGetObject", Keywords = "GetObject"), Category = "HandyHttp")
 	static bool GetObject(FString Handle, const FString& URL, const FString& SavePaths);
@@ -30,4 +36,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "HandyDeleteObject", Keywords = "DeleteObject"), Category = "HandyHttp")
 	static bool DeleteObject(FString Handle, const FString& URL);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "HandyDeleteObjects", Keywords = "DeleteObject"), Category = "HandyHttp")
+	static void DeleteObjects(FString Handle, const TArray<FString>& URL);
 };

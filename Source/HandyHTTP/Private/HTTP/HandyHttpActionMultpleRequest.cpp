@@ -13,13 +13,37 @@ FHandyHttpActionMultpleRequest::FHandyHttpActionMultpleRequest()
 
 }
 
+void FHandyHttpActionMultpleRequest::GetObjects(const TArray<FString>& URL, const FString& SavePaths)
+{
+	SetPaths(SavePaths);
+	for (const auto& Tmp : URL)
+	{
+		FHTTPClient Client;
+
+		FGetObjectRequest Request(Tmp);
+
+		REQUEST_BIND_FUN(FHandyHttpActionMultpleRequest);
+
+		if (Client.GetObject(Request))
+		{
+			RequestNumber++;
+		}
+	}
+}
+
 bool FHandyHttpActionMultpleRequest::GetObject(const FString& URL, const FString& SavePaths)
 {
-	return false;
+	bool bResult = FHandyHttpActionRequest::GetObject(URL, SavePaths);
+	if (bResult)
+	{
+		RequestNumber++;
+	}
+	return bResult;
 }
 
 bool FHandyHttpActionMultpleRequest::PutObject(const FString& URL, const FString& LocalPaths)
 {
+	SetPaths(LocalPaths);
 	TArray<FString> AllPaths;
 	IFileManager::Get().FindFilesRecursive(AllPaths, *LocalPaths, TEXT("*"), true, true);
 	for (const auto& Tmp : AllPaths)
@@ -43,6 +67,22 @@ bool FHandyHttpActionMultpleRequest::PutObject(const FString& URL, const FString
 	return false;
 }
 
+void FHandyHttpActionMultpleRequest::DeleteObjects(const TArray<FString>& URL)
+{
+	//RequestNumber = URL.Num();
+	for (auto& Tmp : URL)
+	{
+		FHTTPClient Client;
+
+		FDeleteObjectRequest Request(Tmp);
+
+		if (Client.DeleteObject(Request))
+		{
+			RequestNumber++;
+		}
+	}
+}
+
 void FHandyHttpActionMultpleRequest::HttpRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	if (Request.IsValid() &&
@@ -50,7 +90,11 @@ void FHandyHttpActionMultpleRequest::HttpRequestCompleted(FHttpRequestPtr Reques
 		bConnectedSuccessfully &&
 		EHttpResponseCodes::IsOk(Response->GetResponseCode()))
 	{
-
+		if (Request->GetVerb() == "GET")
+		{
+			FString FileName = FPaths::GetCleanFilename(Request->GetURL());
+			FFileHelper::SaveArrayToFile(Response->GetContent(), *(GetPaths() / FileName));
+		}
 		FHandyHttpRequest HandyHttpRequest;
 		FHandyHttpResponse HandyHttpResponse;
 		{
@@ -58,6 +102,7 @@ void FHandyHttpActionMultpleRequest::HttpRequestCompleted(FHttpRequestPtr Reques
 			HttpResponsePtrToHandyResponse(Response, HandyHttpResponse);
 		}
 		HandyHttpRequestCompleteDelegate.ExecuteIfBound(HandyHttpRequest, HandyHttpResponse, bConnectedSuccessfully);
+		HandyCompleteDelegate.ExecuteIfBound(HandyHttpRequest, HandyHttpResponse, bConnectedSuccessfully);
 	}
 	else
 	{
@@ -68,14 +113,21 @@ void FHandyHttpActionMultpleRequest::HttpRequestCompleted(FHttpRequestPtr Reques
 			HttpResponsePtrToHandyResponse(Response, HandyHttpResponse);
 		}
 		HandyHttpRequestCompleteDelegate.ExecuteIfBound(HandyHttpRequest, HandyHttpResponse, bConnectedSuccessfully);
+		HandyCompleteDelegate.ExecuteIfBound(HandyHttpRequest, HandyHttpResponse, bConnectedSuccessfully);
 	}
 	if (RequestNumber > 0)
 	{
 		RequestNumber--;
+		if (RequestNumber <= 0)
+		{
+			HandyAllRequestCompleteDelegate.ExecuteIfBound();
+			AllTasksCompletedDelegate.ExecuteIfBound();
+			delete this;
+		}
 	}
 	else
 	{
-		delete this;
+		check(0);
 	}
 }
 

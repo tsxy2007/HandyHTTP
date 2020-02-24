@@ -20,7 +20,11 @@ public:
 
 
 public:
+	// ¼æÈÝÀ¶Í¼
+	virtual void GetObjects(const TArray<FString>& URL, const FString& SavePaths);
+	virtual void DeleteObjects(const TArray<FString>& URL);
 
+	//Õý³£
 	virtual bool GetObject(const FString& URL, const FString& SavePaths);
 	virtual bool PutObject(const FString& URL, TArray<uint8>& Data);
 	virtual bool PutObject(const FString& URL, const FString& LocalPaths);
@@ -28,6 +32,7 @@ public:
 	virtual bool DeleteObject(const FString& URL);
 
 	FORCEINLINE FString GetPaths() { return TmpSavePaths; }
+	FORCEINLINE void SetPaths(const FString& InPaths) { TmpSavePaths = InPaths; }
 protected:
 	void HttpRequestCompleted(FHttpRequestPtr Request,FHttpResponsePtr Response,bool bConnectedSuccessfully);
 	void HttpRequestProgress(FHttpRequestPtr Request, int32 BytesSent,int32 BytesReceived);
@@ -36,9 +41,16 @@ protected:
 	void Print(const FString& Msg, float Time = 10.f, FColor Color = FColor::Red);
 
 public:
-	FHandyHttpRequestCompleteDelegate HandyHttpRequestCompleteDelegate;
-	FHandyHttpRequestProgressDelegate HandyHttpRequestProgressDelegate;
-	FHandyHttpRequestHeaderReceivedDelegate HandyHttpRequestHeaderReceivedDelegate;
+	// BP
+	FHandyHttpSingleRequestCompleteDelegate HandyHttpRequestCompleteDelegate;
+	FHandyHttpSingleRequestProgressDelegate HandyHttpRequestProgressDelegate;
+	FHandyHttpSingleRequestHeaderReceivedDelegate HandyHttpRequestHeaderReceivedDelegate;
+	FHandyAllRequestCompleteDelegate HandyAllRequestCompleteDelegate;
+	// C++
+	FHandySingleRequestCompleteDelegate HandyCompleteDelegate;
+	FHandySingleRequestProgressDelegate HandySingleRequestProgressDelegate;
+	FHandySingleRequestHeaderReceivedDelegate HandySingleRequestHeaderReceivedDelegate;
+	FSimpleDelegate  AllTasksCompletedDelegate;
 private:
 	//static FHandyHttpActionRequest* Instance;
 

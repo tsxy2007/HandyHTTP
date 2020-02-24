@@ -3,10 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HandyHttpType.h"
+#include "HTTP/HandyHttpActionRequest.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum class EHTTPRequestType : uint8
+{
+	SINGLE,
+	MULTPLE,
+};
+
+
 class HANDYHTTP_API FHandyHttpManage
 {
 public:
@@ -18,10 +25,11 @@ public:
 
 	
 
-	FString RegistedHttpObject(
-		FHandyHttpRequestCompleteDelegate			HandyHttpRequestCompleteDelegate = FHandyHttpRequestCompleteDelegate(),
-		FHandyHttpRequestProgressDelegate			HandyHttpRequestProgressDelegate = FHandyHttpRequestProgressDelegate(),
-		FHandyHttpRequestHeaderReceivedDelegate		HandyHttpRequestHeaderReceivedDelegate = FHandyHttpRequestHeaderReceivedDelegate()
+	FString RegistedHttpRequest(EHTTPRequestType HttpRequestType = EHTTPRequestType::SINGLE,
+		FHandyHttpSingleRequestCompleteDelegate			HandyHttpRequestCompleteDelegate = FHandyHttpSingleRequestCompleteDelegate(),
+		FHandyHttpSingleRequestProgressDelegate			HandyHttpRequestProgressDelegate = FHandyHttpSingleRequestProgressDelegate(),
+		FHandyHttpSingleRequestHeaderReceivedDelegate		HandyHttpRequestHeaderReceivedDelegate = FHandyHttpSingleRequestHeaderReceivedDelegate(),
+		FHandyAllRequestCompleteDelegate HandyAllRequestCompleteDelegate = FHandyAllRequestCompleteDelegate()
 	);
 
 	FHandyHttpActionRequest* Find(FString& handle);

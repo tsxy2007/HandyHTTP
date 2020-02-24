@@ -8,8 +8,10 @@ class HANDYHTTP_API FHandyHttpActionMultpleRequest : public FHandyHttpActionRequ
 public:
 	FHandyHttpActionMultpleRequest();
 
+	virtual void GetObjects(const TArray<FString>& URL, const FString& SavePaths);
 	virtual bool GetObject(const FString& URL, const FString& SavePaths);
 	virtual bool PutObject(const FString& URL, const FString& LocalPaths);
+	virtual void DeleteObjects(const TArray<FString>& URL);
 protected:
 	void HttpRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 	void HttpRequestProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived);

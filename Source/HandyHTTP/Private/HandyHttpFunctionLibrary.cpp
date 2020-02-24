@@ -5,9 +5,23 @@
 #include "HandyHttpManage.h"
 #include "HTTP/HandyHttpActionRequest.h"
 
-FString UHandyHttpFunctionLibrary::RegistedHttpObject(FHandyHttpRequestCompleteDelegate HandyHttpRequestCompleteDelegate /*= FHandyHttpRequestCompleteDelegate()*/, FHandyHttpRequestProgressDelegate HandyHttpRequestProgressDelegate /*= FHandyHttpRequestProgressDelegate()*/, FHandyHttpRequestHeaderReceivedDelegate FHandyHttpRequestHeaderReceivedDelegate /*= FHandyHttpRequestHeaderReceivedDelegate()*/)
+FString UHandyHttpFunctionLibrary::RegistedHttpRequest( FHandyHttpSingleRequestCompleteDelegate HandyHttpRequestCompleteDelegate, FHandyHttpSingleRequestProgressDelegate HandyHttpRequestProgressDelegate, FHandyHttpSingleRequestHeaderReceivedDelegate FHandyHttpSingleRequestHeaderReceivedDelegate , FHandyAllRequestCompleteDelegate HandyAllRequestCompleteDelegate)
 {
-	return FHandyHttpManage::Get()->RegistedHttpObject(HandyHttpRequestCompleteDelegate, HandyHttpRequestProgressDelegate, FHandyHttpRequestHeaderReceivedDelegate);
+	return FHandyHttpManage::Get()->RegistedHttpRequest( EHTTPRequestType::SINGLE,HandyHttpRequestCompleteDelegate, HandyHttpRequestProgressDelegate, FHandyHttpSingleRequestHeaderReceivedDelegate, HandyAllRequestCompleteDelegate);
+}
+
+FString UHandyHttpFunctionLibrary::RegistedHttpMultpleRequest(FHandyHttpSingleRequestCompleteDelegate HandyHttpRequestCompleteDelegate, FHandyHttpSingleRequestProgressDelegate HandyHttpRequestProgressDelegate, FHandyHttpSingleRequestHeaderReceivedDelegate HandyHttpRequestHeaderReceivedDelegate, FHandyAllRequestCompleteDelegate HandyAllRequestCompleteDelegate)
+{
+	return FHandyHttpManage::Get()->RegistedHttpRequest(EHTTPRequestType::MULTPLE, HandyHttpRequestCompleteDelegate, HandyHttpRequestProgressDelegate, HandyHttpRequestHeaderReceivedDelegate, HandyAllRequestCompleteDelegate);
+}
+
+void UHandyHttpFunctionLibrary::GetObjects(FString Handle, const TArray<FString>& URL, const FString& SavePaths)
+{
+	FHandyHttpActionRequest* NewAction = FHandyHttpManage::Get()->Find(Handle);
+	if (NewAction)
+	{
+		NewAction->GetObjects(URL, SavePaths);
+	}
 }
 
 bool UHandyHttpFunctionLibrary::GetObject(FString Handle, const FString& URL, const FString& SavePaths)
@@ -48,4 +62,13 @@ bool UHandyHttpFunctionLibrary::DeleteObject(FString Handle, const FString& URL)
 		return NewAction->DeleteObject(URL);
 	}
 	return false;
+}
+
+void UHandyHttpFunctionLibrary::DeleteObjects(FString Handle, const TArray<FString>& URL)
+{
+	FHandyHttpActionRequest* NewAction = FHandyHttpManage::Get()->Find(Handle);
+	if (NewAction)
+	{
+		NewAction->DeleteObjects(URL);
+	}
 }

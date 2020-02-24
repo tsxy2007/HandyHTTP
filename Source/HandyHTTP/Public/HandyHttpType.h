@@ -70,9 +70,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = HandyHttpResponse)
 	FString ResponseMessage;
 };
+// BP
+DECLARE_DYNAMIC_DELEGATE_ThreeParams(FHandyHttpSingleRequestCompleteDelegate, const FHandyHttpRequest&, Request, const FHandyHttpResponse&, Response, bool, bConnectedSuccessfully);
+DECLARE_DYNAMIC_DELEGATE_ThreeParams(FHandyHttpSingleRequestProgressDelegate, const FHandyHttpRequest&, Request, int32, BytesSent, int32, BytesReceived);
+DECLARE_DYNAMIC_DELEGATE_ThreeParams(FHandyHttpSingleRequestHeaderReceivedDelegate, const FHandyHttpRequest&, Request, const FString&, HeaderName, const FString&, NewHeaderValue);
 
-DECLARE_DYNAMIC_DELEGATE_ThreeParams(FHandyHttpRequestCompleteDelegate, const FHandyHttpRequest&, Request, const FHandyHttpResponse&, Response, bool, bConnectedSuccessfully);
-DECLARE_DYNAMIC_DELEGATE_ThreeParams(FHandyHttpRequestProgressDelegate, const FHandyHttpRequest&, Request, int32, BytesSent, int32, BytesReceived);
-DECLARE_DYNAMIC_DELEGATE_ThreeParams(FHandyHttpRequestHeaderReceivedDelegate, const FHandyHttpRequest&, Request, const FString&, HeaderName, const FString&, NewHeaderValue);
-
-
+// C++
+DECLARE_DYNAMIC_DELEGATE(FHandyAllRequestCompleteDelegate);
+DECLARE_DELEGATE_ThreeParams(FHandySingleRequestCompleteDelegate, const FHandyHttpRequest&,const FHandyHttpResponse&, bool);
+DECLARE_DELEGATE_ThreeParams(FHandySingleRequestProgressDelegate, const FHandyHttpRequest&, int32, int32);
+DECLARE_DELEGATE_ThreeParams(FHandySingleRequestHeaderReceivedDelegate, const FHandyHttpRequest&, const FString&, const FString&);
